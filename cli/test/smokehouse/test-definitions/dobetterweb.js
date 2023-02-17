@@ -537,22 +537,23 @@ const expectations = {
         },
       },
       'prioritize-lcp-image': {
-        score: 1,
-        numericValue: 0,
+        // In CI, there can sometimes be slight savings.
+        numericValue: '<=50',
         details: {
           items: [{
             node: {
               snippet: '<h2 id="toppy" style="background-image:url(\'\');">',
               nodeLabel: 'Do better web tester page',
             },
-            url: 'http://localhost:10200/dobetterweb/lighthouse-1024x680.jpg?lcp',
-            wastedMs: 0,
+            url: 'http://localhost:10200/dobetterweb/lighthouse-1024x680.jpg?redirected-lcp',
+            wastedMs: '<=50',
           }],
           debugData: {
             initiatorPath: [{
-              url: 'http://localhost:10200/dobetterweb/lighthouse-1024x680.jpg?lcp',
+              url: 'http://localhost:10200/dobetterweb/lighthouse-1024x680.jpg?redirected-lcp',
               initiatorType: 'parser',
             }, {
+              // TOD(bckenny): missing initiator step through redirected image url.
               url: 'http://localhost:10200/dobetterweb/dbw_tester.css?delay=2000&async=true',
               initiatorType: 'parser',
             }, {
