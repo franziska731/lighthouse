@@ -86,6 +86,7 @@ class ThirdPartyFacades extends Audit {
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
       supportedModes: ['navigation'],
+      guidanceLevel: 2,
       requiredArtifacts: ['traces', 'devtoolsLogs', 'URL'],
     };
   }
