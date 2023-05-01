@@ -29,6 +29,8 @@ export interface Result {
   displayValue?: string;
   /** An explanation of why the audit failed on the test page. */
   explanation?: string;
+  /** A number indicating how much guidance Lighthouse provides to solve the problem in this audit on a 1-3 scale. Higher means more guidance. */
+  guidanceLevel?: number;
   /** Error message from any exception thrown while running this audit. */
   errorMessage?: string;
   warnings?: string[];

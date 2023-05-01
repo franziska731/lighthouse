@@ -398,6 +398,7 @@ class Audit {
       id: audit.meta.id,
       title: auditTitle,
       description: audit.meta.description,
+      guidanceLevel: audit.meta.guidanceLevel,
 
       score,
       scoreDisplayMode,
