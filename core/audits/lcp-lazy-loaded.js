@@ -6,6 +6,7 @@
 
 import {Audit} from './audit.js';
 import * as i18n from '../lib/i18n/i18n.js';
+import {LCPBreakdown} from '../computed/metrics/lcp-breakdown.js';
 
 const UIStrings = {
   /** Title of a Lighthouse audit that provides detail on whether the largest above-the-fold image was loaded with sufficient priority. This descriptive title is shown to users when the image was loaded properly. */
@@ -29,7 +30,8 @@ class LargestContentfulPaintLazyLoaded extends Audit {
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
       supportedModes: ['navigation'],
-      requiredArtifacts: ['TraceElements', 'ViewportDimensions', 'ImageElements'],
+      requiredArtifacts: ['TraceElements', 'ViewportDimensions', 'ImageElements',
+        'traces', 'devtoolsLogs', 'GatherContext', 'URL'],
     };
   }
 
@@ -46,9 +48,10 @@ class LargestContentfulPaintLazyLoaded extends Audit {
 
   /**
    * @param {LH.Artifacts} artifacts
-   * @return {LH.Audit.Product}
+   * @param {LH.Audit.Context} context
+   * @return {Promise<LH.Audit.Product>}
    */
-  static audit(artifacts) {
+  static async audit(artifacts, context) {
     const lcpElement = artifacts.TraceElements.find(element => {
       return element.traceEventType === 'largest-contentful-paint' && element.type === 'image';
     });
@@ -73,8 +76,20 @@ class LargestContentfulPaintLazyLoaded extends Audit {
       },
     ]);
 
+    const wasLazyLoaded = lcpElementImage.loading === 'lazy';
+
+    const metricComputationData = Audit.makeMetricComputationDataInput(artifacts, context);
+    const lcpBreakdown = await LCPBreakdown.request(metricComputationData, context);
+    let lcpSavings = 0;
+    if (wasLazyLoaded && lcpBreakdown.loadStart !== undefined) {
+      // We don't know when the LCP resource was first "seen" before being lazy loaded.
+      // Our best estimate for LCP savings is the entire LCP load delay.
+      lcpSavings = lcpBreakdown.loadStart - lcpBreakdown.ttfb;
+    }
+    details.metricSavings = {LCP: lcpSavings};
+
     return {
-      score: lcpElementImage.loading === 'lazy' ? 0 : 1,
+      score: wasLazyLoaded ? 0 : 1,
       details,
     };
   }
