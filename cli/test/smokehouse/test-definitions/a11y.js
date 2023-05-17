@@ -199,7 +199,7 @@ const expectations = {
                 'type': 'node',
                 'selector': 'body > section > div#aria-required-children',
                 'snippet': '<div id="aria-required-children" role="list">',
-                'explanation': 'Fix any of the following:\n  Required ARIA child role not present: listitem\n  Element has no aria-busy="true" attribute',
+                'explanation': 'Fix any of the following:\n  Required ARIA child role not present: listitem\n  Element uses aria-busy="true" while showing a loader',
                 'nodeLabel': 'Item',
               },
             },
@@ -693,6 +693,22 @@ const expectations = {
                 'snippet': '<div id="tabindex" tabindex="10">',
                 'explanation': 'Fix any of the following:\n  Element has a tabindex greater than 0',
                 'nodeLabel': 'body > section > div#tabindex',
+              },
+            },
+          ],
+        },
+      },
+      'td-has-header': {
+        score: 0,
+        details: {
+          items: [
+            {
+              node: {
+                'type': 'node',
+                'selector': 'body > section > table#td-has-header',
+                'snippet': '<table id="td-has-header">',
+                'explanation': 'Fix all of the following:\n  Some non-empty data cells do not have table headers',
+                'nodeLabel': 'FOO\tFOO\tFOO\tFOO\nfoo\tfoo\tfoo\tfoo\nfoo\tfoo\tfoo\tfoo\nfoo\tfoo\tfoo\tfoo',
               },
             },
           ],
