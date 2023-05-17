@@ -49,7 +49,7 @@ class FontDisplay extends Audit {
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
       supportedModes: ['navigation'],
-      guidanceLevel: 2,
+      guidanceLevel: 3,
       requiredArtifacts: ['devtoolsLogs', 'CSSUsage', 'URL'],
     };
   }

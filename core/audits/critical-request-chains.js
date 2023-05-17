@@ -37,7 +37,7 @@ class CriticalRequestChains extends Audit {
       description: str_(UIStrings.description),
       scoreDisplayMode: Audit.SCORING_MODES.INFORMATIVE,
       supportedModes: ['navigation'],
-      guidanceLevel: 2,
+      guidanceLevel: 1,
       requiredArtifacts: ['traces', 'devtoolsLogs', 'URL'],
     };
   }

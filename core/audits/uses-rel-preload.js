@@ -43,7 +43,7 @@ class UsesRelPreloadAudit extends Audit {
       title: str_(UIStrings.title),
       description: str_(UIStrings.description),
       supportedModes: ['navigation'],
-      guidanceLevel: 2,
+      guidanceLevel: 3,
       requiredArtifacts: ['devtoolsLogs', 'traces', 'URL'],
       scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
     };

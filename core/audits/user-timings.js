@@ -39,7 +39,7 @@ class UserTimings extends Audit {
       title: str_(UIStrings.title),
       description: str_(UIStrings.description),
       scoreDisplayMode: Audit.SCORING_MODES.INFORMATIVE,
-      guidanceLevel: 1,
+      guidanceLevel: 2,
       requiredArtifacts: ['traces'],
     };
   }
