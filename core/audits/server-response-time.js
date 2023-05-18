@@ -77,10 +77,6 @@ class ServerResponseTime extends Audit {
       [{url: mainResource.url, responseTime}],
       {overallSavingsMs}
     );
-    details.metricSavings = {
-      FCP: overallSavingsMs,
-      LCP: overallSavingsMs,
-    };
 
     return {
       numericValue: responseTime,
@@ -88,6 +84,10 @@ class ServerResponseTime extends Audit {
       score: Number(passed),
       displayValue,
       details,
+      metricSavings: {
+        FCP: overallSavingsMs,
+        LCP: overallSavingsMs,
+      },
     };
   }
 }
