@@ -62,7 +62,11 @@ class LargestContentfulPaintLazyLoaded extends Audit {
 
     if (!lcpElementImage ||
       !this.isImageInViewport(lcpElementImage, artifacts.ViewportDimensions)) {
-      return {score: null, notApplicable: true};
+      return {
+        score: null,
+        notApplicable: true,
+        metricSavings: {LCP: 0},
+      };
     }
 
     /** @type {LH.Audit.Details.Table['headings']} */
@@ -86,10 +90,12 @@ class LargestContentfulPaintLazyLoaded extends Audit {
       // Our best estimate for LCP savings is the entire LCP load delay.
       lcpSavings = lcpBreakdown.loadStart - lcpBreakdown.ttfb;
     }
-    details.metricSavings = {LCP: lcpSavings};
 
     return {
       score: wasLazyLoaded ? 0 : 1,
+      metricSavings: {
+        LCP: lcpSavings,
+      },
       details,
     };
   }

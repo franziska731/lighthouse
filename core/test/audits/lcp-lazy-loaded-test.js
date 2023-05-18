@@ -119,6 +119,9 @@ describe('Performance: lcp-lazy-loaded audit', () => {
     expect(auditResult).toEqual({
       score: null,
       notApplicable: true,
+      metricSavings: {
+        LCP: 0,
+      },
     });
   });
 });
