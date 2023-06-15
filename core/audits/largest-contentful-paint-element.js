@@ -134,7 +134,13 @@ class LargestContentfulPaintElement extends Audit {
       settings: context.settings, URL: artifacts.URL};
 
     const elementTable = this.makeElementTable(artifacts);
-    if (!elementTable) return {score: null, notApplicable: true};
+    if (!elementTable) {
+      return {
+        score: null,
+        notApplicable: true,
+        metricSavings: {LCP: 0},
+      };
+    }
 
     const items = [elementTable];
     let displayValue;
@@ -152,6 +158,9 @@ class LargestContentfulPaintElement extends Audit {
       score: 1,
       displayValue,
       details,
+      metricSavings: {
+        LCP: metricLcp || 0,
+      },
     };
   }
 }
