@@ -159,6 +159,8 @@ class LargestContentfulPaintElement extends Audit {
       displayValue,
       details,
       metricSavings: {
+        // Conceptually, this doesn't make much sense as "savings" for this audit since there isn't anything to "fix".
+        // However, this audit will always be useful when improving LCP and that should be reflected in our impact calculations.
         LCP: metricLcp || 0,
       },
     };
