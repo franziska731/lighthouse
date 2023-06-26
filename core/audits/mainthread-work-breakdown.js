@@ -13,6 +13,7 @@ import {Audit} from './audit.js';
 import {taskGroups} from '../lib/tracehouse/task-groups.js';
 import * as i18n from '../lib/i18n/i18n.js';
 import {MainThreadTasks} from '../computed/main-thread-tasks.js';
+import {TotalBlockingTime} from '../computed/metrics/total-blocking-time.js';
 
 const UIStrings = {
   /** Title of a diagnostic audit that provides detail on the main thread work the browser did to load the page. This descriptive title is shown to users when the amount is acceptable and no user action is required. */
@@ -42,7 +43,7 @@ class MainThreadWorkBreakdown extends Audit {
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
       scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ['traces'],
+      requiredArtifacts: ['traces', 'devtoolsLogs', 'URL', 'GatherContext'],
     };
   }
 
@@ -81,6 +82,15 @@ class MainThreadWorkBreakdown extends Audit {
   static async audit(artifacts, context) {
     const settings = context.settings || {};
     const trace = artifacts.traces[MainThreadWorkBreakdown.DEFAULT_PASS];
+
+    let tbtSavings = 0;
+    try {
+      const metricComputationData = Audit.makeMetricComputationDataInput(artifacts, context);
+      const tbtResult = await TotalBlockingTime.request(metricComputationData, context);
+      tbtSavings = tbtResult.timing;
+    } catch (err) {
+      if (!/Could not find any top level events/.test(err)) throw err;
+    }
 
     const tasks = await MainThreadTasks.request(trace, context);
     const multiplier = settings.throttlingMethod === 'simulate' ?
@@ -128,6 +138,9 @@ class MainThreadWorkBreakdown extends Audit {
       numericUnit: 'millisecond',
       displayValue: str_(i18n.UIStrings.seconds, {timeInMs: totalExecutionTime}),
       details: tableDetails,
+      metricSavings: {
+        TBT: tbtSavings,
+      },
     };
   }
 }
