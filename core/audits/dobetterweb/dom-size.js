@@ -13,6 +13,7 @@
 
 import {Audit} from '../audit.js';
 import * as i18n from '../../lib/i18n/i18n.js';
+import {TBTImpactTasks} from '../../computed/tbt-impact-tasks.js';
 
 const UIStrings = {
   /** Title of a diagnostic audit that provides detail on the size of the web page's DOM. The size of a DOM is characterized by the total number of DOM elements and greatest DOM depth. This descriptive title is shown to users when the amount is acceptable and no user action is required. */
@@ -53,7 +54,8 @@ class DOMSize extends Audit {
       failureTitle: str_(UIStrings.failureTitle),
       description: str_(UIStrings.description),
       scoreDisplayMode: Audit.SCORING_MODES.NUMERIC,
-      requiredArtifacts: ['DOMStats'],
+      requiredArtifacts: ['DOMStats', 'URL', 'GatherContext'],
+      __internalOptionalArtifacts: ['traces', 'devtoolsLogs'],
     };
   }
 
@@ -69,13 +71,44 @@ class DOMSize extends Audit {
     };
   }
 
+  /**
+   * @param {LH.Artifacts} artifacts
+   * @param {LH.Audit.Context} context
+   * @return {Promise<number|undefined>}
+   */
+  static async computeTbtImpact(artifacts, context) {
+    let tbtImpact = 0;
+
+    // We still want to surface this audit in snapshot mode, but we can't compute the impact
+    // in snapshot mode. We want the TBT impact to be undefined in snapshot mode because TBT
+    // is not measured in snapshot mode.
+    const {GatherContext, devtoolsLogs, traces} = artifacts;
+    if (GatherContext.gatherMode !== 'navigation' ||
+        !devtoolsLogs?.[Audit.DEFAULT_PASS] ||
+        !traces?.[Audit.DEFAULT_PASS]) {
+      return undefined;
+    }
+
+    const metricComputationData = Audit.makeMetricComputationDataInput(artifacts, context);
+
+    try {
+      const tbtImpactTasks = await TBTImpactTasks.request(metricComputationData, context);
+      for (const task of tbtImpactTasks) {
+        if (task.group.id !== 'styleLayout') continue;
+        tbtImpact += task.selfTbtImpact;
+      }
+    } catch {}
+
+    return Math.round(tbtImpact);
+  }
+
 
   /**
    * @param {LH.Artifacts} artifacts
    * @param {LH.Audit.Context} context
-   * @return {LH.Audit.Product}
+   * @return {Promise<LH.Audit.Product>}
    */
-  static audit(artifacts, context) {
+  static async audit(artifacts, context) {
     const stats = artifacts.DOMStats;
 
     const score = Audit.computeLogNormalScore(
@@ -120,12 +153,18 @@ class DOMSize extends Audit {
       },
     ];
 
+    const tbtImpact = await this.computeTbtImpact(artifacts, context);
+    console.log('#########', tbtImpact);
+
     return {
       score,
       numericValue: stats.totalBodyElements,
       numericUnit: 'element',
       displayValue: str_(UIStrings.displayValue, {itemCount: stats.totalBodyElements}),
       details: Audit.makeTableDetails(headings, items),
+      metricSavings: {
+        TBT: tbtImpact,
+      },
     };
   }
 }
