@@ -154,7 +154,6 @@ class DOMSize extends Audit {
     ];
 
     const tbtImpact = await this.computeTbtImpact(artifacts, context);
-    console.log('#########', tbtImpact);
 
     return {
       score,
