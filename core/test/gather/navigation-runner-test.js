@@ -472,8 +472,10 @@ describe('NavigationRunner', () => {
       const {artifacts, pageLoadError} = await run(navigation);
       expect(pageLoadError).toBeInstanceOf(LighthouseError);
       expect(artifacts).toEqual({
-        devtoolsLogs: {'pageLoadError-default': expect.any(Array)},
-        traces: {'pageLoadError-default': {traceEvents: []}},
+        DevtoolsLog: expect.any(Array),
+        Trace: {traceEvents: []},
+        devtoolsLogs: {defaultPass: expect.any(Array)},
+        traces: {defaultPass: {traceEvents: []}},
       });
     });
 
