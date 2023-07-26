@@ -79,14 +79,17 @@ class DOMSize extends Audit {
   static async computeTbtImpact(artifacts, context) {
     let tbtImpact = 0;
 
-    // We still want to surface this audit in snapshot mode, but we can't compute the impact
-    // in snapshot mode. We want the TBT impact to be undefined in snapshot mode because TBT
-    // is not measured in snapshot mode.
+    // We still want to surface this audit in snapshot mode, but since we don't compute TBT
+    // the impact should always be undefined.
     const {GatherContext, devtoolsLogs, traces} = artifacts;
-    if (GatherContext.gatherMode !== 'navigation' ||
-        !devtoolsLogs?.[Audit.DEFAULT_PASS] ||
-        !traces?.[Audit.DEFAULT_PASS]) {
+    if (GatherContext.gatherMode !== 'navigation') {
       return undefined;
+    }
+
+    // Since the artifacts are optional, it's still possible for them to be missing in navigation mode.
+    // Navigation mode does compute TBT so we should surface a numerical savings of 0.
+    if (!devtoolsLogs?.[Audit.DEFAULT_PASS] || !traces?.[Audit.DEFAULT_PASS]) {
+      return 0;
     }
 
     const metricComputationData = Audit.makeMetricComputationDataInput(artifacts, context);

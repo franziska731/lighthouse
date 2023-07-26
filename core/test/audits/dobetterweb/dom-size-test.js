@@ -79,7 +79,7 @@ describe('DOMSize audit', () => {
     artifacts.traces = undefined;
     const auditResult = await DOMSize.audit(artifacts, context);
     expect(auditResult.score).toEqual(0.43);
-    expect(auditResult.metricSavings).toEqual({});
+    expect(auditResult.metricSavings).toEqual({TBT: 0});
   });
 
   it('works if tbt impact throws an error', async () => {
