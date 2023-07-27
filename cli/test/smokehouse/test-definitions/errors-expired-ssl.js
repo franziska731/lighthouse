@@ -46,8 +46,8 @@ const expectations = {
   },
   artifacts: {
     PageLoadError: {code: 'INSECURE_DOCUMENT_REQUEST'},
-    DevtoolsLog: NONEMPTY_ARRAY,
-    Trace: {traceEvents: NONEMPTY_ARRAY},
+    DevtoolsLogError: NONEMPTY_ARRAY,
+    TraceError: {traceEvents: NONEMPTY_ARRAY},
   },
 };
 

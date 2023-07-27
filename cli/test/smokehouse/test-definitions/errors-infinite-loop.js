@@ -43,8 +43,8 @@ const expectations = {
   },
   artifacts: {
     PageLoadError: {code: 'PAGE_HUNG'},
-    DevtoolsLog: NONEMPTY_ARRAY,
-    Trace: {traceEvents: NONEMPTY_ARRAY},
+    DevtoolsLogError: NONEMPTY_ARRAY,
+    TraceError: {traceEvents: NONEMPTY_ARRAY},
   },
 };
 
